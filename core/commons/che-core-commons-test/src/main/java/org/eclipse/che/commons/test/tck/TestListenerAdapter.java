@@ -20,7 +20,7 @@ import org.testng.ITestResult;
  *
  * @author Yevhenii Voevodin
  */
-public abstract class AbstractTestListener implements ITestListener {
+public abstract class TestListenerAdapter implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {}

@@ -12,7 +12,7 @@ package org.eclipse.che.core.db.schema;
 
 import com.google.inject.ImplementedBy;
 
-import org.eclipse.che.core.db.schema.flyway.FlywaySchemaInitializer;
+import org.eclipse.che.core.db.schema.impl.flyway.FlywaySchemaInitializer;
 
 /**
  * Initializes database schema or migrates an old version of it to a new one.

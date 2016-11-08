@@ -105,7 +105,7 @@ import static java.lang.String.format;
  * @see org.testng.IInvokedMethodListener
  * @see TckResourcesCleaner
  */
-public class TckListener extends AbstractTestListener {
+public class TckListener extends TestListenerAdapter {
     private Injector injector;
     private Object   instance;
 
