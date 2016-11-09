@@ -60,7 +60,7 @@ describe('CheWorkspaceBuilder', function(){
     // check values
     expect(workspace.config.name).toEqual(name);
     expect(workspace.id).toEqual(id);
-    expect(workspace.config.temporary).toBeTruthy();
+    expect(workspace.temporary).toBeTruthy();
 
   });
 
@@ -72,7 +72,7 @@ describe('CheWorkspaceBuilder', function(){
     var workspace = wkspBuilder.withTemporary(false).build();
 
     // check values
-    expect(workspace.config.temporary).toBeFalsy();
+    expect(workspace.temporary).toBeFalsy();
 
 
   });

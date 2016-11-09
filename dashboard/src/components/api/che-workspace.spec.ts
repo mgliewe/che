@@ -9,11 +9,14 @@
  *   Codenvy, S.A. - initial API and implementation
  */
 'use strict';
+import {CheWorkspace} from './che-workspace.factory';
+import {CheAPIBuilder} from './builder/che-api-builder.factory';
+import {CheHttpBackend} from './test/che-http-backend';
 
 /**
  * Test of the CheWorkspace
  */
-describe('CheWorkspace', function(){
+describe('CheWorkspace', () => {
 
     /**
      * Workspace Factory for the test
@@ -56,7 +59,7 @@ describe('CheWorkspace', function(){
     /**
      * Inject factory and http backend
      */
-    beforeEach(inject(function(cheWorkspace, cheAPIBuilder, cheHttpBackend) {
+    beforeEach(inject((cheWorkspace: CheWorkspace, cheAPIBuilder: CheAPIBuilder, cheHttpBackend: CheHttpBackend) => {
         factory = cheWorkspace;
         apiBuilder = cheAPIBuilder;
         cheBackend = cheHttpBackend;
@@ -66,7 +69,7 @@ describe('CheWorkspace', function(){
     /**
      * Check assertion after the test
      */
-    afterEach(function () {
+    afterEach(() => {
         httpBackend.verifyNoOutstandingExpectation();
         httpBackend.verifyNoOutstandingRequest();
     });
@@ -75,14 +78,13 @@ describe('CheWorkspace', function(){
     /**
      * Check that we're able to fetch workspaces and calls the listeners
      */
-    it('Fetch Workspaces', function() {
-
+    it('Fetch Workspaces', () => {
         // setup tests objects
-        var workspace1 = apiBuilder.getWorkspaceBuilder().withId('123').withName('testWorkspace').build();
-        var tmpWorkspace2 = apiBuilder.getWorkspaceBuilder().withId('456').withName('tmpWorkspace').withTemporary(true).build();
+        let workspace1 = apiBuilder.getWorkspaceBuilder().withId('123').withName('testWorkspace').build();
+        let tmpWorkspace2 = apiBuilder.getWorkspaceBuilder().withId('456').withName('tmpWorkspace').withTemporary(true).build();
 
-        // Add the listener
-        var listener = new Listener();
+        // add the listener
+        let listener = new Listener();
         factory.addListener(listener);
 
         // no workspaces now on factory or on listener
@@ -106,21 +108,21 @@ describe('CheWorkspace', function(){
         httpBackend.flush();
 
         // now, check workspaces
-        var workspaces = factory.getWorkspaces();
+        let workspaces = factory.getWorkspaces();
+        let resultTmpWorkspace2 = factory.getWorkspaceById(tmpWorkspace2.id);
 
         // check we have only one workspace (temporary workspace is excluded)
         expect(workspaces.length).toEqual(1);
 
-        // check name of the workspace
-        var resultWorkspace1 = workspaces[0];
+        // check name of the workspaces
+        let resultWorkspace1 = workspaces[0];
         expect(resultWorkspace1.config.name).toEqual(workspace1.config.name);
+        expect(resultTmpWorkspace2.config.name).toEqual(resultTmpWorkspace2.config.name);
 
         // check the callback has been called without temporary workspace
         expect(listener.getWorkspaces().length).toEqual(1);
         expect(listener.getWorkspaces()[0].config.name).toEqual(workspace1.config.name);
        }
     );
-
-
 
 });
