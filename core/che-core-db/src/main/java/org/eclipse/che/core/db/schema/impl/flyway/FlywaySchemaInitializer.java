@@ -32,25 +32,17 @@ public class FlywaySchemaInitializer implements SchemaInitializer {
     private final String     scriptsPrefix;
     private final String     scriptsSuffix;
     private final String     versionSeparator;
+    private final boolean    baselineOnMigrate;
+    private final String     baselineVersion;
 
-    /**
-     * Creates new flyway schema initializer.
-     *
-     * @param providerName
-     *         the name of the database provider e.g. 'h2' or 'postgresql'
-     * @param scriptsLocations
-     *         the locations to scripts
-     * @param scriptsPrefix
-     * @param scriptsSuffix
-     * @param versionSeparator
-     * @param dataSource
-     */
     @Inject
     public FlywaySchemaInitializer(@Named("db.provider.name") String providerName,
-                                   @Named("db.schema.scripts.locations") String[] scriptsLocations,
-                                   @Named("db.schema.scripts.prefix") String scriptsPrefix,
-                                   @Named("db.schema.scripts.suffix") String scriptsSuffix,
-                                   @Named("db.schema.versionDir.separator") String versionSeparator,
+                                   @Named("db.schema.flyway.scripts.locations") String[] scriptsLocations,
+                                   @Named("db.schema.flyway.scripts.prefix") String scriptsPrefix,
+                                   @Named("db.schema.flyway.scripts.suffix") String scriptsSuffix,
+                                   @Named("db.schema.flyway.version.separator") String versionSeparator,
+                                   @Named("db.schema.flyway.baseline_on_migrate") boolean baselineOnMigrate,
+                                   @Named("db.schema.flyway.baseline_version") String baselineVersion,
                                    DataSource dataSource) {
         this.dataSource = dataSource;
         this.locations = scriptsLocations;
@@ -58,6 +50,8 @@ public class FlywaySchemaInitializer implements SchemaInitializer {
         this.scriptsPrefix = scriptsPrefix;
         this.scriptsSuffix = scriptsSuffix;
         this.versionSeparator = versionSeparator;
+        this.baselineOnMigrate = baselineOnMigrate;
+        this.baselineVersion = baselineVersion;
     }
 
     @Override
@@ -68,11 +62,11 @@ public class FlywaySchemaInitializer implements SchemaInitializer {
         flyway.setClassLoader(Thread.currentThread().getContextClassLoader());
         flyway.setResolvers(new CustomSqlMigrationResolver(providerName));
         flyway.setSkipDefaultResolvers(true);
-        flyway.setBaselineOnMigrate(true);
-        flyway.setBaselineVersionAsString("1.0");
-        flyway.setSqlMigrationSeparator(".");
-        flyway.setSqlMigrationSuffix(".sql");
-        flyway.setSqlMigrationPrefix("");
+        flyway.setBaselineOnMigrate(baselineOnMigrate);
+        flyway.setBaselineVersionAsString(baselineVersion);
+        flyway.setSqlMigrationSeparator(versionSeparator);
+        flyway.setSqlMigrationSuffix(scriptsSuffix);
+        flyway.setSqlMigrationPrefix(scriptsPrefix);
         try {
             flyway.migrate();
         } catch (RuntimeException x) {
